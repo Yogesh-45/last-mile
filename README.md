@@ -1,4 +1,4 @@
-# Delivery Assistant NLU
+# last-mile
 
 A lightweight Natural Language Understanding (NLU) pipeline for Hinglish (Hindi+English code-mixed) delivery driver messages. It classifies driver intent and extracts structured slot values in under 2 ms per request — no GPU required.
 
@@ -279,4 +279,4 @@ The keyword "next" clearly signals the upcoming order. The model also handles ph
 | **Slots** | *(empty)* |
 | **low_confidence** | `true` |
 
-The model's top probability (0.22) falls below the confidence threshold (0.40), so it correctly abstains rather than forcing a wrong prediction. This prevents hallucinated slot values for unrecognised inputs.
+The model's top probability (0.22) falls below the confidence threshold (0.25), so it correctly abstains rather than forcing a wrong prediction. This prevents hallucinated slot values for unrecognised inputs.

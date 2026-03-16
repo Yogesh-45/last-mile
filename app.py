@@ -15,7 +15,7 @@ Usage
 
 from typing import Any
 
-import joblib
+import joblib  # pyright: ignore[reportMissingImports]
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -43,7 +43,7 @@ slot_models   = load_slot_models()
 INTENT_LABELS = list(intent_model.classes_)
 
 # ── App ──────────────────────────────────────────────────────────────
-app = FastAPI(title="Delivery Assistant NLU", version="1.0")
+app = FastAPI(title="last-mile", version="1.0")
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
 
