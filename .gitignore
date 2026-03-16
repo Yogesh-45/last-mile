@@ -49,3 +49,5 @@ mobilebert-uncased-int8/
 .env
 .env.*
 secrets.json
+*.odt
+*.pdf
