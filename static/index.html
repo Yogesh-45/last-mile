@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delivery Assistant NLU</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #f0f2f5;
+      --surface:    #ffffff;
+      --surface-2:  #f7f8fa;
+      --border:     #e4e6ea;
+      --accent:     #4f46e5;
+      --accent-lt:  #818cf8;
+      --accent-bg:  #eef2ff;
+      --green:      #16a34a;
+      --green-bg:   #dcfce7;
+      --yellow:     #d97706;
+      --yellow-bg:  #fef9c3;
+      --red:        #dc2626;
+      --red-bg:     #fee2e2;
+      --text:       #111827;
+      --text-2:     #374151;
+      --muted:      #6b7280;
+      --radius:     12px;
+      --shadow:     0 1px 3px rgba(0,0,0,.07), 0 4px 12px rgba(0,0,0,.05);
+    }
+
+    html, body { height: 100%; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* ── Top nav bar ──────────────────────────────────────────── */
+    .navbar {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 0 28px;
+      height: 58px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,.06);
+    }
+    .navbar .logo {
+      width: 36px; height: 36px;
+      background: var(--accent);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .navbar h1 {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .navbar .tagline {
+      font-size: 13px;
+      color: var(--muted);
+      margin-left: 4px;
+    }
+    .nav-badge {
+      margin-left: auto;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border: 1px solid #c7d2fe;
+      padding: 3px 10px;
+      border-radius: 99px;
+    }
+
+    /* ── Main two-column layout ───────────────────────────────── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── LEFT PANEL ───────────────────────────────────────────── */
+    .left-panel {
+      width: 380px;
+      min-width: 320px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+    }
+
+    .panel-section {
+      padding: 20px 22px;
+      border-bottom: 1px solid var(--border);
+    }
+    .panel-section:last-child { border-bottom: none; flex: 1; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .9px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+
+    /* Input */
+    textarea {
+      width: 100%;
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 14px;
+      padding: 12px 14px;
+      resize: none;
+      outline: none;
+      transition: border-color .2s;
+      line-height: 1.55;
+      min-height: 88px;
+      max-height: 200px;
+      font-family: inherit;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: #9ca3af; }
+
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    button#submit-btn {
+      flex: 1;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 9px;
+      padding: 10px 0;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+    button#submit-btn:hover   { background: #4338ca; }
+    button#submit-btn:active  { transform: scale(0.98); }
+    button#submit-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    button#clear-btn {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      padding: 10px 14px;
+      font-size: 14px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: border-color .15s;
+      font-family: inherit;
+    }
+    button#clear-btn:hover { border-color: var(--accent-lt); color: var(--accent); }
+
+    /* Example chips */
+    .chip-group { margin-bottom: 8px; }
+    .chip-group-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      margin-bottom: 5px;
+      text-transform: uppercase;
+      letter-spacing: .5px;
+    }
+    .chips-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .chip {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 99px;
+      font-size: 12px;
+      color: var(--text-2);
+      padding: 4px 11px;
+      cursor: pointer;
+      transition: border-color .12s, background .12s, color .12s;
+      white-space: nowrap;
+    }
+    .chip:hover {
+      border-color: var(--accent-lt);
+      background: var(--accent-bg);
+      color: var(--accent);
+    }
+
+    /* History */
+    .history-list { display: flex; flex-direction: column; gap: 7px; }
+    .h-item {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: border-color .12s;
+    }
+    .h-item:hover { border-color: var(--accent-lt); }
+    .h-badge {
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-radius: 99px;
+      padding: 2px 9px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .h-text {
+      font-size: 12px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .no-history {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* ── RIGHT PANEL ──────────────────────────────────────────── */
+    .right-panel {
+      flex: 1;
+      overflow-y: auto;
+      padding: 28px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--muted);
+      gap: 10px;
+    }
+    .empty-icon { font-size: 52px; opacity: .4; }
+    .empty-state h2 { font-size: 17px; font-weight: 700; color: var(--text-2); }
+    .empty-state p  { font-size: 13px; max-width: 300px; line-height: 1.5; }
+
+    /* Result sections */
+    .result-section { display: flex; flex-direction: column; gap: 6px; }
+    .r-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .8px;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .r-label::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px 22px;
+    }
+
+    /* Input echo */
+    .echo-bubble {
+      background: var(--accent-bg);
+      border: 1px solid #c7d2fe;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: var(--text-2);
+      line-height: 1.5;
+      font-style: italic;
+    }
+    .echo-bubble::before { content: '"'; font-weight: 800; color: var(--accent); }
+    .echo-bubble::after  { content: '"'; font-weight: 800; color: var(--accent); }
+
+    /* Warning */
+    .warn-box {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      background: var(--yellow-bg);
+      border: 1.5px solid #fcd34d;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #92400e;
+    }
+    .warn-box strong { display: block; margin-bottom: 2px; }
+
+    /* Intent card */
+    .intent-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .intent-icon-box {
+      width: 56px; height: 56px;
+      border-radius: 14px;
+      background: var(--accent-bg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+      flex-shrink: 0;
+    }
+    .intent-body { flex: 1; }
+    .intent-name {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .intent-desc { font-size: 13px; color: var(--muted); line-height: 1.4; }
+
+    .conf-ring {
+      width: 62px; height: 62px;
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border: 4px solid transparent;
+      flex-shrink: 0;
+    }
+    .conf-ring.high { background: var(--green-bg);  border-color: #86efac; }
+    .conf-ring.mid  { background: var(--yellow-bg); border-color: #fcd34d; }
+    .conf-ring.low  { background: var(--red-bg);    border-color: #fca5a5; }
+    .conf-pct  { font-size: 15px; font-weight: 800; line-height: 1; }
+    .conf-ring.high .conf-pct { color: var(--green);  }
+    .conf-ring.mid  .conf-pct { color: var(--yellow); }
+    .conf-ring.low  .conf-pct { color: var(--red);    }
+    .conf-sub { font-size: 9px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .4px; margin-top: 2px; }
+
+    /* Slots */
+    .slot-heading {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 14px;
+    }
+    .slot-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 10px;
+    }
+    .slot-cell {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      padding: 12px 14px;
+    }
+    .slot-cell-key {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .6px;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .slot-cell-val {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+    .no-slots {
+      font-size: 13px;
+      color: var(--muted);
+      font-style: italic;
+    }
+
+    /* Alternatives (collapsible) */
+    .toggle-btn {
+      font-size: 13px;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+    }
+    .toggle-btn:hover { text-decoration: underline; }
+    .arr { display: inline-block; transition: transform .2s; font-size: 11px; }
+    .arr.open { transform: rotate(90deg); }
+
+    #alt-body { display: none; margin-top: 14px; }
+    .bar-list { display: flex; flex-direction: column; gap: 10px; }
+    .bar-row { }
+    .bar-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12.5px;
+      margin-bottom: 4px;
+      color: var(--text-2);
+    }
+    .bar-top span:last-child { color: var(--muted); }
+    .bar-track {
+      height: 6px;
+      background: #e9ecef;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .bar-fill { height: 100%; border-radius: 99px; background: #c7d2fe; transition: width .4s ease; }
+    .bar-fill.top { background: var(--accent); }
+
+    /* Error */
+    #error-msg {
+      display: none;
+      background: var(--red-bg);
+      border: 1px solid #fca5a5;
+      border-radius: 10px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: var(--red);
+    }
+
+    /* Spinner */
+    .spinner {
+      width: 15px; height: 15px;
+      border: 2.5px solid rgba(255,255,255,.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 700px) {
+      .main { flex-direction: column; }
+      .left-panel { width: 100%; min-width: unset; border-right: none; border-bottom: 1px solid var(--border); }
+      .right-panel { padding: 20px 16px; }
+      .navbar .tagline { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav bar -->
+<nav class="navbar">
+  <div class="logo">🚚</div>
+  <h1>Delivery NLU</h1>
+  <span class="tagline">— Intent &amp; Slot Prediction</span>
+  <span class="nav-badge">Hinglish Model</span>
+</nav>
+
+<div class="main">
+
+  <!-- ── LEFT PANEL ─────────────────────────────────────────── -->
+  <aside class="left-panel">
+
+    <!-- Input -->
+    <div class="panel-section">
+      <div class="section-label">Driver Message</div>
+      <textarea id="text-input" rows="3"
+        placeholder="Type a driver message in Hinglish…&#10;e.g. Customer phone nahi utha raha"></textarea>
+      <div class="btn-row">
+        <button id="submit-btn" onclick="predict()">
+          <span id="btn-label">Analyse</span>
+          <div class="spinner" id="spinner"></div>
+        </button>
+        <button id="clear-btn" onclick="clearInput()">Clear</button>
+      </div>
+      <div id="error-msg" style="margin-top:10px"></div>
+    </div>
+
+    <!-- Examples -->
+    <div class="panel-section">
+      <div class="section-label">Try an example</div>
+
+      <div class="chip-group">
+        <div class="chip-group-label">📞 Calls &amp; Availability</div>
+        <div class="chips-row" id="chips-calls"></div>
+      </div>
+      <div class="chip-group" style="margin-top:10px">
+        <div class="chip-group-label">📦 Order Actions</div>
+        <div class="chips-row" id="chips-orders"></div>
+      </div>
+      <div class="chip-group" style="margin-top:10px">
+        <div class="chip-group-label">⚠️ Issues &amp; Delays</div>
+        <div class="chips-row" id="chips-issues"></div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="panel-section">
+      <div class="section-label">Recent predictions</div>
+      <div class="history-list" id="history-list">
+        <p class="no-history">No predictions yet.</p>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ── RIGHT PANEL ─────────────────────────────────────────── -->
+  <main class="right-panel" id="right-panel">
+
+    <!-- Empty state -->
+    <div class="empty-state" id="empty-state">
+      <div class="empty-icon">🔍</div>
+      <h2>Nothing analysed yet</h2>
+      <p>Type a driver message on the left or click one of the examples to see intent and slot predictions here.</p>
+    </div>
+
+    <!-- Results (hidden until first prediction) -->
+    <div id="results" style="display:none; display:none; flex-direction:column; gap:18px;">
+
+      <!-- Input echo -->
+      <div class="result-section">
+        <div class="r-label">Input</div>
+        <div class="echo-bubble" id="echo-text"></div>
+      </div>
+
+      <!-- Warning -->
+      <div class="warn-box" id="warn-box">
+        <span style="font-size:22px">⚠️</span>
+        <div>
+          <strong>Low confidence</strong>
+          The message doesn't clearly match any known intent — it may be out of scope or unclear. Please rephrase.
+        </div>
+      </div>
+
+      <!-- Detected intent -->
+      <div class="result-section">
+        <div class="r-label">Detected Intent</div>
+        <div class="card">
+          <div class="intent-row">
+            <div class="intent-icon-box" id="intent-icon">🤖</div>
+            <div class="intent-body">
+              <div class="intent-name" id="intent-name">–</div>
+              <div class="intent-desc" id="intent-desc">–</div>
+            </div>
+            <div class="conf-ring" id="conf-ring">
+              <span class="conf-pct" id="conf-pct">–</span>
+              <span class="conf-sub">confidence</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extracted slots -->
+      <div class="result-section">
+        <div class="r-label">Extracted Details</div>
+        <div class="card">
+          <div class="slot-heading">What the model pulled out of the message</div>
+          <div id="slots-container"></div>
+        </div>
+      </div>
+
+      <!-- Alternatives -->
+      <div class="result-section">
+        <div class="r-label">Alternatives</div>
+        <div class="card">
+          <button class="toggle-btn" onclick="toggleAlt()">
+            <span class="arr" id="arr">▶</span>
+            Show all intent confidence scores
+          </button>
+          <div id="alt-body">
+            <div class="bar-list" id="bar-list"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</div><!-- .main -->
+
+<script>
+  // ── Metadata ──────────────────────────────────────────────────
+  const INTENT_META = {
+    unknown:              { icon:"❓", label:"Unknown",              desc:"Didn't match any known intent. Please rephrase." },
+    call_customer:        { icon:"📞", label:"Call Customer",        desc:"Driver wants to call the customer directly." },
+    customer_unavailable: { icon:"🚫", label:"Customer Unavailable", desc:"Customer cannot be reached or isn't present at the location." },
+    get_address:          { icon:"📍", label:"Get Address",          desc:"Driver is requesting the delivery address." },
+    mark_delivered:       { icon:"✅", label:"Mark Delivered",       desc:"Order handed over — mark it as delivered in the system." },
+    mark_picked_up:       { icon:"🛍️", label:"Mark Picked Up",      desc:"Order collected from restaurant — mark as picked up." },
+    navigation_help:      { icon:"🗺️", label:"Navigation Help",     desc:"Driver needs directions or a route to the destination." },
+    order_issue:          { icon:"⚠️", label:"Order Issue",          desc:"There is a problem with the order at the restaurant." },
+    report_delay:         { icon:"⏱️", label:"Report Delay",         desc:"Driver is running late and wants to notify the customer." },
+  };
+
+  const SLOT_LABELS = {
+    order_reference:   "Order Reference",
+    availability:      "Customer Status",
+    issue_type:        "Issue Type",
+    delay_time:        "Delay",
+    unit:              "Unit",
+    target:            "Call Target",
+    status:            "Status",
+    navigation_action: "Navigation Action",
+  };
+
+  const SLOT_VALUES = {
+    next:            "Next order",
+    current:         "Current order",
+    no_response:     "Not answering calls",
+    not_found:       "Not at location",
+    unreachable:     "Phone off / unreachable",
+    not_ready:       "Order not ready yet",
+    damaged_package: "Package is damaged",
+    order_problem:   "General order problem",
+    show_route:      "Show route",
+    start:           "Start navigation",
+    customer:        "Customer",
+    delivered:       "Delivered",
+    picked_up:       "Picked up",
+    minutes:         "minutes",
+  };
+
+  // ── Example chips grouped by category ────────────────────────
+  const CHIP_GROUPS = {
+    "chips-calls": [
+      ["📞 Call",          "Customer ka number dial karo"],
+      ["🚫 No answer",     "Customer phone nahi utha raha"],
+      ["🚫 Not found",     "Door pe aaya hu par customer nahi mil raha"],
+      ["🚫 Unreachable",   "Customer ka phone band hai"],
+    ],
+    "chips-orders": [
+      ["📍 Next address",  "next order ka address bhejo bhai"],
+      ["📍 Current addr.", "current order ka location kya hai"],
+      ["✅ Delivered",     "Order deliver ho gaya mark kar do"],
+      ["🛍️ Picked up",   "food pick kar liya mark pickup"],
+      ["🗺️ Route",       "Route dikhao bhai customer location ka"],
+    ],
+    "chips-issues": [
+      ["⏱️ 10 min delay", "Thoda late ho jayega, 10 min lag jayenge"],
+      ["⚠️ Not ready",    "Restaurant bol raha order ready nahi hai"],
+      ["⚠️ Damaged",      "Order ka packet damage lag raha hai"],
+      ["⚠️ Problem",      "Order mein kuch gadbad hai"],
+    ],
+  };
+
+  Object.entries(CHIP_GROUPS).forEach(([id, chips]) => {
+    const el = document.getElementById(id);
+    chips.forEach(([label, text]) => {
+      const c = document.createElement("div");
+      c.className = "chip";
+      c.textContent = label;
+      c.title = text;
+      c.onclick = () => { document.getElementById("text-input").value = text; predict(); };
+      el.appendChild(c);
+    });
+  });
+
+  // Auto-grow textarea
+  const ta = document.getElementById("text-input");
+  ta.addEventListener("input", () => { ta.style.height="auto"; ta.style.height=ta.scrollHeight+"px"; });
+  ta.addEventListener("keydown", e => { if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();predict();} });
+
+  function clearInput() {
+    ta.value = "";
+    ta.style.height = "auto";
+    ta.focus();
+  }
+
+  // ── Alternatives toggle ───────────────────────────────────────
+  let altOpen = false;
+  function toggleAlt() {
+    altOpen = !altOpen;
+    document.getElementById("alt-body").style.display = altOpen ? "block" : "none";
+    document.getElementById("arr").className = "arr " + (altOpen ? "open" : "");
+  }
+
+  // ── History ───────────────────────────────────────────────────
+  const history = [];
+  function addHistory(text, intent) {
+    history.unshift({ text, intent });
+    if (history.length > 6) history.pop();
+    renderHistory();
+  }
+  function renderHistory() {
+    const el = document.getElementById("history-list");
+    if (!history.length) { el.innerHTML = '<p class="no-history">No predictions yet.</p>'; return; }
+    el.innerHTML = "";
+    history.forEach(h => {
+      const meta = INTENT_META[h.intent] || { icon:"🤖", label: h.intent };
+      const d = document.createElement("div");
+      d.className = "h-item";
+      d.innerHTML = `<span class="h-badge">${meta.icon} ${meta.label}</span><span class="h-text">${escHtml(h.text)}</span>`;
+      d.onclick = () => { ta.value = h.text; predict(); };
+      el.appendChild(d);
+    });
+  }
+
+  // ── Predict ───────────────────────────────────────────────────
+  async function predict() {
+    const text = ta.value.trim();
+    if (!text) return;
+    setLoading(true);
+    clearError();
+    try {
+      const res = await fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      });
+      if (!res.ok) throw new Error((await res.json()).detail || "Server error");
+      const data = await res.json();
+      renderResult(data);
+      addHistory(text, data.intent);
+    } catch(err) {
+      showError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function renderResult(data) {
+    // Show results, hide empty state
+    document.getElementById("empty-state").style.display = "none";
+    const results = document.getElementById("results");
+    results.style.display = "flex";
+
+    // Input echo
+    document.getElementById("echo-text").textContent = data.text;
+
+    // Warning
+    document.getElementById("warn-box").style.display = data.low_confidence ? "flex" : "none";
+
+    // Intent
+    const meta = INTENT_META[data.intent] || { icon:"🤖", label: data.intent, desc:"" };
+    document.getElementById("intent-icon").textContent = meta.icon;
+    document.getElementById("intent-name").textContent = meta.label;
+    document.getElementById("intent-desc").textContent = meta.desc;
+
+    // Confidence ring
+    const pct  = Math.round(data.confidence * 100);
+    const ring = document.getElementById("conf-ring");
+    document.getElementById("conf-pct").textContent = pct + "%";
+    ring.className = "conf-ring " + (pct >= 80 ? "high" : pct >= 50 ? "mid" : "low");
+
+    // Slots grid
+    const cont    = document.getElementById("slots-container");
+    const entries = Object.entries(data.slots ?? {}).filter(([,v]) => v !== null);
+    if (!entries.length) {
+      cont.innerHTML = `<p class="no-slots">No additional details extracted for this intent.</p>`;
+    } else {
+      cont.innerHTML = `<div class="slot-grid">${entries.map(([k,v]) => `
+        <div class="slot-cell">
+          <div class="slot-cell-key">${escHtml(SLOT_LABELS[k] || k)}</div>
+          <div class="slot-cell-val">${escHtml(SLOT_VALUES[String(v)] || String(v))}</div>
+        </div>`).join("")}</div>`;
+    }
+
+    // Alternatives bar chart
+    document.getElementById("bar-list").innerHTML = data.top_intents.map((it, i) => {
+      const m = INTENT_META[it.intent] || { icon:"🤖", label: it.intent };
+      const p = Math.round(it.confidence * 100);
+      return `<div class="bar-row">
+        <div class="bar-top"><span>${m.icon} ${m.label}</span><span>${p}%</span></div>
+        <div class="bar-track"><div class="bar-fill ${i===0?'top':''}" style="width:${p}%"></div></div>
+      </div>`;
+    }).join("");
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────
+  function setLoading(on) {
+    document.getElementById("spinner").style.display   = on ? "block" : "none";
+    document.getElementById("btn-label").style.display = on ? "none"  : "inline";
+    document.getElementById("submit-btn").disabled     = on;
+  }
+  function showError(msg) {
+    const el = document.getElementById("error-msg");
+    el.textContent = "⚠️  " + msg;
+    el.style.display = "block";
+  }
+  function clearError() {
+    document.getElementById("error-msg").style.display = "none";
+  }
+  function escHtml(s) {
+    return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  }
+</script>
+</body>
+</html>

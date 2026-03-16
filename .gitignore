@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+wheels/
+sdist/
+develop-eggs/
+.installed.cfg
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# ML artefacts — tracked separately or excluded if large
+# Uncomment the lines below if you do NOT want to commit model files
+# models/
+
+# Logs & output
+*.log
+evaluate_failures.json
+test_evaluate_failures.json
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# MobileBERT local model directories (large binary files)
+mobilebert-uncased/
+mobilebert-uncased-fp16/
+mobilebert-uncased-int8/
+
+# Secrets / env config
+.env
+.env.*
+secrets.json

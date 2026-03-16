@@ -1,0 +1,358 @@
+[
+  {
+    "text": "Bhai next order ka address bhej do",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "next"
+    }
+  },
+  {
+    "text": "Agle order ka location kya hai?",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "next"
+    }
+  },
+  {
+    "text": "Current order ka address dikhao zara",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "current"
+    }
+  },
+  {
+    "text": "Yaar next delivery ka exact address batao",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "next"
+    }
+  },
+  {
+    "text": "pls agla order ka adress send karo",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "next"
+    }
+  },
+  {
+    "text": "Customer ka number dial karo",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "Bhai customer ko call laga do",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "Zara customer ko phone karna hai",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "custmr ko call connect kar do jaldi",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "Customer ko ek baar ring karo please",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "Order deliver ho gaya mark kar do",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "Bhai delivery complete ho gayi update kar do",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "Ho gaya delivery, mark delivered",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "order deliverd hogya update krdo",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "Customer ko order de diya, delivered mark karo",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "Order pickup kar liya restaurant se",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "Bhai food pick kar liya mark pickup",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "Pickup done from hotel, update kar do",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "order pickd up hogya restaurant se",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "Restaurant se parcel le liya hai, picked up mark karo",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "Thoda late ho jayega, 10 min lag jayenge",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 10,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "Traffic bahut hai yaar 5 min late ho jaunga",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 5,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "Customer ko bol do 15 minute delay hoga",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 15,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "5 min late aaunga pls inform customer",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 5,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "road block hai boss 10 min aur lagega",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 10,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "Is address ke liye map navigation start karo",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Route dikhao bhai customer location ka",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Map kholo aur rasta batao delivery ka",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Navigation on karo pls location ke liye",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Customer address ka direction chahiye",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Restaurant bol raha order ready nahi hai",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "not_ready"
+    }
+  },
+  {
+    "text": "Yaar item missing lag raha hai packet mein",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "order_problem"
+    }
+  },
+  {
+    "text": "Order mein problem hai restaurant confirm karo",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "order_problem"
+    }
+  },
+  {
+    "text": "lagta hai order galat pack hua hai",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "order_problem"
+    }
+  },
+  {
+    "text": "restaurant ne bola order abhi ready nahi",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "not_ready"
+    }
+  },
+  {
+    "text": "Customer phone nahi utha raha",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "no_response"
+    }
+  },
+  {
+    "text": "Door pe aaya hu par customer nahi mil raha",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "not_found"
+    }
+  },
+  {
+    "text": "Customer reachable nahi hai kya karu?",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "unreachable"
+    }
+  },
+  {
+    "text": "custmr call pick nahi kar raha",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "no_response"
+    }
+  },
+  {
+    "text": "Location pe hu but customer ghar pe nahi hai",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "not_found"
+    }
+  },
+  {
+    "text": "Next order ka address jaldi bhejo yaar",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "next"
+    }
+  },
+  {
+    "text": "Customer ko ek call laga do pls",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  },
+  {
+    "text": "Delivery complete boss mark delivered karna",
+    "intent": "mark_delivered",
+    "slots": {
+      "status": "delivered"
+    }
+  },
+  {
+    "text": "Pickup ho gaya restaurant se update kar do",
+    "intent": "mark_picked_up",
+    "slots": {
+      "status": "picked_up"
+    }
+  },
+  {
+    "text": "Thoda jam hai road pe 8 min late aaunga",
+    "intent": "report_delay",
+    "slots": {
+      "delay_time": 8,
+      "unit": "minutes"
+    }
+  },
+  {
+    "text": "Map pe best route dikhao delivery ke liye",
+    "intent": "navigation_help",
+    "slots": {
+      "navigation_action": "show_route"
+    }
+  },
+  {
+    "text": "Order ka packet damage lag raha hai",
+    "intent": "order_issue",
+    "slots": {
+      "issue_type": "damaged_package"
+    }
+  },
+  {
+    "text": "Customer ko mil nahi pa raha location pe",
+    "intent": "customer_unavailable",
+    "slots": {
+      "availability": "not_found"
+    }
+  },
+  {
+    "text": "Bhai current order ka full address bata dena",
+    "intent": "get_address",
+    "slots": {
+      "order_reference": "current"
+    }
+  },
+  {
+    "text": "Zara customer ko call connect karo abhi",
+    "intent": "call_customer",
+    "slots": {
+      "target": "customer"
+    }
+  }
+]
